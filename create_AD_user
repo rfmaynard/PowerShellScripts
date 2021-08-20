@@ -1,0 +1,19 @@
+$firstname = Read-Host -Prompt "First Name"
+$lastname = Read-Host -Prompt "Last Name"
+$fullname = "$firstname $lastname"
+$samAccName = "$firstname.$lastname"
+$usrPrincName = "$samAccName@securekey.com"
+$title = Read-Host -Prompt "Title"
+$department = Read-Host -Prompt "Department"
+$mobile = Read-Host -Prompt "Mobile Phone Number"
+$manager = Read-Host -Prompt "Manger Name (firstname.lastname format)"
+$managerDN = Get-ADUser $manager | select DistinguishedName
+
+New-ADUser -Name $fullname -GivenName $firstname -Surname $lastname -SamAccountName $samAccName -UserPrincipalName $usrPrincName -Path "OU=UserDir,DC=goes,DC=here,DC=local" -AccountPassword(Read-Host -AsSecureString "Input Password") -Enabled $true -ChangePasswordAtLogon $false -CannotChangePassword $false -Country "CA" -Department $department -Company "Company" -DisplayName $fullname -Manager $managerDN -EmailAddress $usrPrincName -MobilePhone $mobile -Title $title -PasswordNeverExpires $true -PostalCode "Postal Code Here" -StreetAddress "Address here" -City "Toronto" 
+
+# this part will clone Active Directory groups based on the samAccountName
+
+$source = Read-Host -Prompt "User to copy groups from (firstname.lastname format)"
+$dest = Read-Host -Prompt "User to copy groups to (firstname.lastname format)"
+
+Get-ADUser -Identity $source -Properties memberof | Select-Object -ExpandProperty memberof | Add-ADGroupMember -Members $dest
