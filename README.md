@@ -1,2 +1,2 @@
 # PowerShellScripts
-A bunch of random powershell scripts for Windows
+Powershell scripts for Windows AD Administration
